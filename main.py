@@ -34,3 +34,13 @@ def cars(car: Car):
 def cars():
     return CarsStockage
 
+  
+@app.get("/cars/{id}", response_model=Car)
+def get_car(id: str):
+     
+    for car in CarsStockage:
+        if car.identifier == id:
+            return car
+     
+    raise HTTPException(status_code=404, detail=f"L'{id}' du voiture n'as pas été trouvé.")
+
