@@ -1,4 +1,40 @@
  fastapi
 uvicorn
 
- 
+ from fastapi import FastAPI, status
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from typing import List
+
+app = FastAPI()
+
+# --- Schémas ---
+class Characteristic(BaseModel):
+    max_speed: float
+    max_fuel_capacity: float
+
+class Car(BaseModel):
+    identifier: str
+    brand: str
+    model: str
+    characteristics: Characteristic
+
+# --- Stockage en mémoire ---
+CARS_DB: List[Car] = []
+
+# --- Route GET /ping ---
+@app.get("/ping")
+def ping():
+    return "pong"
+
+# --- Route POST /cars ---
+@app.post("/cars", status_code=status.HTTP_201_CREATED, response_model=Car)
+def create_car(car: Car):
+    # Ajoute la voiture en mémoire
+    CARS_DB.append(car)
+    return car
+
+# --- Route GET /cars ---
+@app.get("/cars", response_model=List[Car])
+def list_cars():
+    return CARS_DB

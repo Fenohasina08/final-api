@@ -25,9 +25,12 @@ def ping():
     return "pong"
 
  
-@app.post("/cars", status_code= 201, response_model=Car)
-def create_car(car: Car):
+@app.post("/cars", status_code= 201)
+def cars(car: Car):
     CarsStockage.append(car)
     return car
 
+@app.get("/cars", response_model=List[Car])
+def cars():
+    return CarsStockage
 
